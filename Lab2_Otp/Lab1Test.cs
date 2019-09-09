@@ -1,3 +1,5 @@
+using Castle.DynamicProxy;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace Lab2_Otp
@@ -23,6 +25,36 @@ namespace Lab2_Otp
 
             var actual = target.IsValid("joey", "91000000");
             Assert.IsTrue(actual);
+        }
+        [Test]
+        public void NSubIsValidTest()
+        {
+            var _fakeRsaTokenDao = Substitute.For<IRsaTokenDao>();
+            _fakeRsaTokenDao.GetRandom(Arg.Any<string>()).Returns("000000");
+
+            var _fakeProfileDao = Substitute.For<IProfileDao>();
+            _fakeProfileDao.GetPassword(Arg.Any<string>()).Returns("91");
+            
+
+            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
+
+            var actual = target.IsValid("joey", "91000000");
+            Assert.IsTrue(actual);
+        }
+        [Test]
+        public void NSubIsInvalidTest()
+        {
+            var _fakeRsaTokenDao = Substitute.For<IRsaTokenDao>();
+            _fakeRsaTokenDao.GetRandom(Arg.Any<string>()).Returns("111111");
+
+            var _fakeProfileDao = Substitute.For<IProfileDao>();
+            _fakeProfileDao.GetPassword(Arg.Any<string>()).Returns("91");
+            
+
+            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
+
+            var actual = target.IsValid("joey", "91000000");
+            Assert.IsFalse(actual);
         }
         [Test]
         public void IsInvalidTest()
