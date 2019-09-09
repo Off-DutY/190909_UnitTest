@@ -52,9 +52,9 @@ namespace Lab2_Otp
             InvalidCase(account, account);
         }
 
-        private void ShouldLogMessage1Times(object accountName)
+        private void ShouldLogMessage1Times(string accountName)
         {
-            _logService.Received(1).Log($"account={accountName}");
+            _logService.Received(1).Log(Arg.Is<string>(s => s.Contains(accountName)));
         }
 
         private void ShouldBeInvalid(string account, string passcode)
