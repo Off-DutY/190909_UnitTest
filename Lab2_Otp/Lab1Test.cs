@@ -7,90 +7,57 @@ namespace Lab2_Otp
     [TestFixture]
     public class Lab1Tests
     {
-        private FakeProfileDao _fakeProfileDao;
-        private FakeRsaTokenDao _fakeRsaTokenDao;
+        private IProfileDao _fakeProfileDao;
+        private IRsaTokenDao _fakeRsaTokenDao;
 
-        [Test]
-        public void IsValidTest()
+        [SetUp]
+        public void Init()
         {
-            _fakeProfileDao = new FakeProfileDao()
-            {
-                Password = "91"
-            };
-            _fakeRsaTokenDao = new FakeRsaTokenDao()
-            {
-                RandomKey = "000000"
-            };
-            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
-
-            var actual = target.IsValid("joey", "91000000");
-            Assert.IsTrue(actual);
+            _fakeRsaTokenDao = Substitute.For<IRsaTokenDao>();
+            _fakeProfileDao = Substitute.For<IProfileDao>();
         }
+
         [Test]
         public void NSubIsValidTest()
         {
-            var _fakeRsaTokenDao = Substitute.For<IRsaTokenDao>();
-            _fakeRsaTokenDao.GetRandom(Arg.Any<string>()).Returns("000000");
+            GiveRsaToken("000000");
+            GivePassword("91");
 
-            var _fakeProfileDao = Substitute.For<IProfileDao>();
-            _fakeProfileDao.GetPassword(Arg.Any<string>()).Returns("91");
-            
-
-            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
-
-            var actual = target.IsValid("joey", "91000000");
-            Assert.IsTrue(actual);
+            ShouldBeValid("joey", "91000000");
         }
+
         [Test]
         public void NSubIsInvalidTest()
         {
-            var _fakeRsaTokenDao = Substitute.For<IRsaTokenDao>();
-            _fakeRsaTokenDao.GetRandom(Arg.Any<string>()).Returns("111111");
+            GiveRsaToken("001100");
+            GivePassword("92");
 
-            var _fakeProfileDao = Substitute.For<IProfileDao>();
-            _fakeProfileDao.GetPassword(Arg.Any<string>()).Returns("91");
-            
+            ShouldBeInValid("joey", "91000000");
+        }
 
+        private void ShouldBeInValid(string account, string passcode)
+        {
             var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
 
-            var actual = target.IsValid("joey", "91000000");
+            var actual = target.IsValid(account, passcode);
             Assert.IsFalse(actual);
         }
-        [Test]
-        public void IsInvalidTest()
+
+        private void ShouldBeValid(string account, string passcode)
         {
-            _fakeProfileDao = new FakeProfileDao()
-            {
-                Password = "92"
-            };
-            _fakeRsaTokenDao = new FakeRsaTokenDao()
-            {
-                RandomKey = "111111"
-            };
             var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
-
-            var actual = target.IsValid("joey", "91000000");
-            Assert.IsFalse(actual);
+            var actual = target.IsValid(account, passcode);
+            Assert.IsTrue(actual);
         }
-    }
 
-    public class FakeRsaTokenDao : IRsaTokenDao
-    {
-        public string RandomKey;
-
-        public string GetRandom(string account)
+        private void GivePassword(string assignPassword)
         {
-            return RandomKey;
+            _fakeProfileDao.GetPassword(Arg.Any<string>()).Returns(assignPassword);
         }
-    }
 
-    public class FakeProfileDao : IProfileDao
-    {
-        public string Password;
-
-        public string GetPassword(string account)
+        private void GiveRsaToken(string assignToken)
         {
-            return Password;
+            _fakeRsaTokenDao.GetRandom(Arg.Any<string>()).Returns(assignToken);
         }
     }
 }
