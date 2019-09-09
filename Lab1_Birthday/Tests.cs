@@ -7,9 +7,17 @@ namespace Lab1_Birthday
     public class Tests
     {
         [Test]
-        public void Test1()
+        public void Is_My_BirthDay()
         {
-            Assert.True(true);
+            var actual = new BirthDay().IsBirthDay();
+            Assert.IsTrue(actual);
+        }
+        
+        [Test]
+        public void Is_Not_My_BirthDay()
+        {
+            var actual = new BirthDay().IsBirthDay();
+            Assert.IsFalse(actual);
         }
     }
 }
