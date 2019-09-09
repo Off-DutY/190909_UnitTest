@@ -24,12 +24,12 @@ namespace Lab3_EcStore
             }
         }
 
-        private IBookDao GetBookDao()
+        protected virtual IBookDao GetBookDao()
         {
             return new BookDao();
         }
 
-        private List<Order> GetOrders()
+        protected virtual List<Order> GetOrders()
         {
             // parse csv file to get orders
             var result = new List<Order>();

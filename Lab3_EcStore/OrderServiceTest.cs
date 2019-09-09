@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using NSubstitute;
+using NUnit.Framework;
 
 namespace Lab3_EcStore
 {
@@ -60,7 +62,41 @@ namespace Lab3_EcStore
         [Test]
         public void Test_SyncBookOrders_3_Orders_Only_2_book_order()
         {
-            Assert.IsTrue(true);
+            var bookDao = Substitute.For<IBookDao>();
+
+            var orderService = new FakeOrderService(bookDao)
+            {
+                ReturnOrders = new List<Order>()
+                {
+                    new Order() {Type = "Book",},
+                    new Order() {Type = "Book",},
+                    new Order() {Type = "What",},
+                }
+            };
+            orderService.SyncBookOrders();
+
+            bookDao.Received(2).Insert(Arg.Any<Order>());
+        }
+    }
+
+    public class FakeOrderService : OrderService
+    {
+        private readonly IBookDao _fakeBookDao;
+        public List<Order> ReturnOrders;
+
+        public FakeOrderService(IBookDao fakeBookDao)
+        {
+            _fakeBookDao = fakeBookDao;
+        }
+
+        protected override IBookDao GetBookDao()
+        {
+            return _fakeBookDao;
+        }
+
+        protected override List<Order> GetOrders()
+        {
+            return ReturnOrders;
         }
     }
 }
