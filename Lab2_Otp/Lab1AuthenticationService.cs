@@ -5,10 +5,10 @@ namespace Lab2_Otp
 {
     public class Lab1AuthenticationService
     {
-        private ProfileDao _profileDao;
-        private RsaTokenDao _rsaTokenDao;
+        private IProfileDao _profileDao;
+        private IRsaTokenDao _rsaTokenDao;
 
-        public Lab1AuthenticationService(ProfileDao profileDao, RsaTokenDao rsaTokenDao)
+        public Lab1AuthenticationService(IProfileDao profileDao, IRsaTokenDao rsaTokenDao)
         {
             _profileDao = profileDao;
             _rsaTokenDao = rsaTokenDao;
@@ -39,9 +39,14 @@ namespace Lab2_Otp
         }
     }
 
-    public class ProfileDao
+    public interface IProfileDao
     {
-        public virtual string GetPassword(string account)
+        string GetPassword(string account);
+    }
+
+    public class ProfileDao : IProfileDao
+    {
+        public string GetPassword(string account)
         {
             return Context.GetPassword(account);
         }
@@ -64,9 +69,14 @@ namespace Lab2_Otp
         }
     }
 
-    public class RsaTokenDao
+    public interface IRsaTokenDao
     {
-        public virtual string GetRandom(string account)
+        string GetRandom(string account);
+    }
+
+    public class RsaTokenDao : IRsaTokenDao
+    {
+        public string GetRandom(string account)
         {
             var seed = new Random((int) DateTime.Now.Ticks & 0x0000FFFF);
             var result = seed.Next(0, 999999).ToString("000000");

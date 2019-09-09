@@ -42,21 +42,21 @@ namespace Lab2_Otp
         }
     }
 
-    public class FakeRsaTokenDao : RsaTokenDao
+    public class FakeRsaTokenDao : IRsaTokenDao
     {
         public string RandomKey;
 
-        public override string GetRandom(string account)
+        public string GetRandom(string account)
         {
             return RandomKey;
         }
     }
 
-    public class FakeProfileDao : ProfileDao
+    public class FakeProfileDao : IProfileDao
     {
         public string Password;
 
-        public override string GetPassword(string account)
+        public string GetPassword(string account)
         {
             return Password;
         }
