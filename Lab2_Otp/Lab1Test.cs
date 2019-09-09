@@ -40,11 +40,16 @@ namespace Lab2_Otp
         [Test]
         public void LogMessageWhenInvalid()
         {
-            GiveRsaToken("001100");
-            GivePassword("92");
-
-            ShouldBeInvalid("joey", "91000000");
+            WhenInvalidCase("joey");
             ShouldLogMessage1Times("joey");
+        }
+
+        private void WhenInvalidCase(string account)
+        {
+            GiveRsaToken("123");
+            GivePassword("456");
+
+            InvalidCase(account, account);
         }
 
         private void ShouldLogMessage1Times(object accountName)
