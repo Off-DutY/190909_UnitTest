@@ -7,11 +7,13 @@ namespace Lab2_Otp
     {
         private IProfileDao _profileDao;
         private IRsaTokenDao _rsaTokenDao;
+        private ILogService _logService;
 
-        public Lab1AuthenticationService(IProfileDao profileDao, IRsaTokenDao rsaTokenDao)
+        public Lab1AuthenticationService(IProfileDao profileDao, IRsaTokenDao rsaTokenDao, ILogService logService)
         {
             _profileDao = profileDao;
             _rsaTokenDao = rsaTokenDao;
+            _logService = logService;
         }
 
         public bool IsValid(string account, string passcode)
@@ -34,8 +36,22 @@ namespace Lab2_Otp
             }
             else
             {
+                string message = $"account={account}";
+                _logService.Log(message);
                 return false;
             }
+        }
+    }
+
+    public interface ILogService
+    {
+        void Log(string message);
+    }
+
+    public class LogService : ILogService
+    {
+        public void Log(string message)
+        {
         }
     }
 
@@ -78,7 +94,7 @@ namespace Lab2_Otp
     {
         public string GetRandom(string account)
         {
-            var seed = new Random((int) DateTime.Now.Ticks & 0x0000FFFF);
+            var seed = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
             var result = seed.Next(0, 999999).ToString("000000");
             Console.WriteLine("randomCode:{0}", result);
 

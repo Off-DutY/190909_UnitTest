@@ -9,16 +9,18 @@ namespace Lab2_Otp
     {
         private IProfileDao _fakeProfileDao;
         private IRsaTokenDao _fakeRsaTokenDao;
+        private ILogService _logService;
 
         [SetUp]
         public void Init()
         {
             _fakeRsaTokenDao = Substitute.For<IRsaTokenDao>();
             _fakeProfileDao = Substitute.For<IProfileDao>();
+            _logService = Substitute.For<ILogService>();
         }
 
         [Test]
-        public void NSubIsValidTest()
+        public void IsValidTest()
         {
             GiveRsaToken("000000");
             GivePassword("91");
@@ -27,17 +29,32 @@ namespace Lab2_Otp
         }
 
         [Test]
-        public void NSubIsInvalidTest()
+        public void IsInvalidTest()
         {
             GiveRsaToken("001100");
             GivePassword("92");
 
-            ShouldBeInValid("joey", "91000000");
+            ShouldBeInvalid("joey", "91000000");
         }
 
-        private void ShouldBeInValid(string account, string passcode)
+        [Test]
+        public void InvalidAndLogMessageTest()
         {
-            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
+            GiveRsaToken("001100");
+            GivePassword("92");
+
+            ShouldBeInvalid("joey", "91000000");
+            ShouldLog1TimesMessage("joey");
+        }
+
+        private void ShouldLog1TimesMessage(object accountName)
+        {
+            _logService.Received(1).Log($"account={accountName}");
+        }
+
+        private void ShouldBeInvalid(string account, string passcode)
+        {
+            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao, _logService);
 
             var actual = target.IsValid(account, passcode);
             Assert.IsFalse(actual);
@@ -45,7 +62,7 @@ namespace Lab2_Otp
 
         private void ShouldBeValid(string account, string passcode)
         {
-            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao);
+            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao, _logService);
             var actual = target.IsValid(account, passcode);
             Assert.IsTrue(actual);
         }
