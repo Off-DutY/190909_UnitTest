@@ -75,7 +75,7 @@ namespace Lab3_EcStore
             };
             orderService.SyncBookOrders();
 
-            bookDao.Received(2).Insert(Arg.Any<Order>());
+            bookDao.Received(2).Insert(Arg.Is<Order>(r => r.Type == "Book"));
         }
     }
 
