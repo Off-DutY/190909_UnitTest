@@ -20,7 +20,7 @@ namespace Lab2_Otp
         }
 
         [Test]
-        public void IsValidTest()
+        public void IsValid()
         {
             GiveRsaToken("000000");
             GivePassword("91");
@@ -29,7 +29,7 @@ namespace Lab2_Otp
         }
 
         [Test]
-        public void IsInvalidTest()
+        public void IsInvalid()
         {
             GiveRsaToken("001100");
             GivePassword("92");
@@ -38,26 +38,32 @@ namespace Lab2_Otp
         }
 
         [Test]
-        public void InvalidAndLogMessageTest()
+        public void LogMessageWhenInvalid()
         {
             GiveRsaToken("001100");
             GivePassword("92");
 
             ShouldBeInvalid("joey", "91000000");
-            ShouldLog1TimesMessage("joey");
+            ShouldLogMessage1Times("joey");
         }
 
-        private void ShouldLog1TimesMessage(object accountName)
+        private void ShouldLogMessage1Times(object accountName)
         {
             _logService.Received(1).Log($"account={accountName}");
         }
 
         private void ShouldBeInvalid(string account, string passcode)
         {
+            var actual = InvalidCase(account, passcode);
+            Assert.IsFalse(actual);
+        }
+
+        private bool InvalidCase(string account, string passcode)
+        {
             var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao, _logService);
 
             var actual = target.IsValid(account, passcode);
-            Assert.IsFalse(actual);
+            return actual;
         }
 
         private void ShouldBeValid(string account, string passcode)
