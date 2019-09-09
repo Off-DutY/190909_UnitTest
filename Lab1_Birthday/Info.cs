@@ -4,11 +4,16 @@ namespace Lab1_Birthday
 {
     public class Info
     {
+        private readonly DateTime _myBirthDate = DateTime.Now;
+
         public bool IsBirthDay()
         {
-            return BirthDay == DateTime.Now.Date;
+            return _myBirthDate.Day == GetToday().Day && _myBirthDate.Month == GetToday().Month;
         }
 
-        public DateTime BirthDay { get; set; }
+        protected virtual DateTime GetToday()
+        {
+            return DateTime.Now;
+        }
     }
 }
