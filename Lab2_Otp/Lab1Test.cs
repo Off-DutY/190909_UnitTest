@@ -49,7 +49,7 @@ namespace Lab2_Otp
             GiveRsaToken("123");
             GivePassword("456");
 
-            InvalidCase(account, account);
+            DoCase(account, account);
         }
 
         private void ShouldLogMessage1Times(string accountName)
@@ -59,23 +59,22 @@ namespace Lab2_Otp
 
         private void ShouldBeInvalid(string account, string passcode)
         {
-            var actual = InvalidCase(account, passcode);
+            var actual = DoCase(account, passcode);
             Assert.IsFalse(actual);
         }
 
-        private bool InvalidCase(string account, string passcode)
+        private void ShouldBeValid(string account, string passcode)
+        {
+            var actual = DoCase(account, passcode);
+            Assert.IsTrue(actual);
+        }
+
+        private bool DoCase(string account, string passcode)
         {
             var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao, _logService);
 
             var actual = target.IsValid(account, passcode);
             return actual;
-        }
-
-        private void ShouldBeValid(string account, string passcode)
-        {
-            var target = new Lab1AuthenticationService(_fakeProfileDao, _fakeRsaTokenDao, _logService);
-            var actual = target.IsValid(account, passcode);
-            Assert.IsTrue(actual);
         }
 
         private void GivePassword(string assignPassword)
