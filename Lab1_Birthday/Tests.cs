@@ -6,18 +6,19 @@ namespace Lab1_Birthday
     [TestFixture]
     public class Tests
     {
-        private Info _info;
+        private fakeInfo _info;
 
         [SetUp]
         public void Init()
         {
-            _info = new Info();
+            _info = new fakeInfo();
         }
 
         [Test]
         public void Is_My_BirthDay()
         {
-            _info.BirthDay = DateTime.Now.Date;
+            _info.today = DateTime.Now;
+            
             var actual = _info.IsBirthDay();
             Assert.IsTrue(actual);
         }
@@ -25,9 +26,20 @@ namespace Lab1_Birthday
         [Test]
         public void Is_Not_My_BirthDay()
         {
-            _info.BirthDay = new DateTime().Date;
+            _info.today = new DateTime();
+            
             var actual = _info.IsBirthDay();
             Assert.IsFalse(actual);
+        }
+    }
+
+    public class fakeInfo : Info
+    {
+        public DateTime today { get; set; }
+
+        protected override DateTime GetToday()
+        {
+            return today;
         }
     }
 }

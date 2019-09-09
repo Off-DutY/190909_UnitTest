@@ -6,9 +6,13 @@ namespace Lab1_Birthday
     {
         public bool IsBirthDay()
         {
-            return BirthDay == DateTime.Now.Date;
+            var dateTime = DateTime.Now;
+            return dateTime.Day == GetToday().Day && dateTime.Month == GetToday().Month;
         }
 
-        public DateTime BirthDay { get; set; }
+        protected virtual DateTime GetToday()
+        {
+            return DateTime.Now;
+        }
     }
 }
